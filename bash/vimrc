@@ -1,0 +1,6 @@
+colorscheme koehler
+set nu
+set cul
+syntax on
+set hlsearch
+set relativenumber
