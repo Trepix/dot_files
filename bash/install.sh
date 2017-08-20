@@ -25,15 +25,19 @@ check_last_command_and_print() {
 
 wget -qO- $GIT_BASE_URI/packages | while read package
 do
-    echo "Installing $package"
-    INSTALL=$(sudo apt-get install $package --yes 2>&1)
-    check_last_command_and_print "$INSTALL" "Successfully ${package} installed"
+    if [ -z "$(hash $package 2>&1)" ]; then
+        echo "$package is already installed"
+    else
+        echo "Installing $package"
+        install=$(sudo apt-get install $package --yes 2>&1)
+        check_last_command_and_print "$install" "Successfully $package installed"
+    fi
 done
 
 if [ ! -f $VIM_FOLDER/vimrc ]; then
     echo "Downloading vim configuration file"
-    DOWNLOAD=$(wget -P $VIM_FOLDER $GIT_BASE_URI/vimrc 2>&1)
-    check_last_command_and_print "$DOWNLOAD" "Successfully vim configuration downloaded"
+    download=$(wget -P $VIM_FOLDER $GIT_BASE_URI/vimrc 2>&1)
+    check_last_command_and_print "$download" "Successfully vim configuration downloaded"
 else
     echo "Another vimrc file already exists in .vim folder"
 fi
@@ -42,8 +46,8 @@ fi
 #oh-my-zsh
 if [ ! -d "$ZSH" ]; then
     echo "Installing oh-my-zsh" 
-    INSTALL=$(git clone git://github.com/robbyrussell/oh-my-zsh.git $ZSH && cp $ZSH/templates/zshrc.zsh-template $ZSHRC_FILE)
-    check_last_command_and_print "$INSTALL" "Successfully oh-my-zsh installed"
+    install=$(git clone git://github.com/robbyrussell/oh-my-zsh.git $ZSH && cp $ZSH/templates/zshrc.zsh-template $ZSHRC_FILE)
+    check_last_command_and_print "$install" "Successfully oh-my-zsh installed"
 
     #replace theme
     sed -i -E "s/.*(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
@@ -58,29 +62,16 @@ else
 fi
 
 if [ ! -d $ZSH_CUSTOM/plugins ]; then
-    echo "Downloading plugins"
     echo "Downloading oh-my-zsh highlights"
-    INSTALL=$(git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting)
-    check_last_command_and_print "$INSTALL" "Successfully zsh-syntax-highlighting downloaded"
+    install=$(git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting)
+    check_last_command_and_print "$install" "Successfully zsh-syntax-highlighting downloaded"
 fi
 
 if [ ! -d $ZSH_CUSTOM/themes ]; then
     echo "Downloading themes"
-    INSTALL=$(wget -P $ZSH_CUSTOM/themes/ $GIT_BASE_URI/themes/bash-for-windows.zsh-theme 2>&1)
-    check_last_command_and_print "$INSTALL" "Successfully themes downloaded"
+    install=$(wget -P $ZSH_CUSTOM/themes/ $GIT_BASE_URI/themes/bash-for-windows.zsh-theme 2>&1)
+    check_last_command_and_print "$install" "Successfully themes downloaded"
 fi
-
-
-#source environment variables file
-#echo -e "\nif [ -f ${ENV_VARIABLES_FILE} ]; then \n    source ${ENV_VARIABLES_FILE}\nfi" >> .zshrc
-
-#if [ ! -f $ENV_VARIABLES_FILE ]; then
-#   echo "Setting environment variables"
-#   echo export ZSH_CUSTOM="${ZSH_CUSTOM}" > $ENV_VARIABLES_FILE
-#   chmod 744 $ZSH_CUSTOM/env_variables
-#fi
-
-
 
 #source aliases file
 echo "\nif [ -f ${ALIASES_FILE} ]; then \n    source ${ALIASES_FILE}\nfi" >> $ZSHRC_FILE
@@ -88,8 +79,8 @@ echo "\nif [ -f ${ALIASES_FILE} ]; then \n    source ${ALIASES_FILE}\nfi" >> $ZS
 #TODO: set variables from file like property file VAR#VALUE and replace it for load it
 if [ ! -f $ALIASES_FILE ]; then
     echo "Setting aliases"
-    DOWNLOAD=$(wget -O $ALIASES_FILE $GIT_BASE_URI/aliases 2>&1)
-    check_last_command_and_print "$DOWNLOAD" "Successfully aliases downloaded"
+    downlaod=$(wget -O $ALIASES_FILE $GIT_BASE_URI/aliases 2>&1)
+    check_last_command_and_print "$downlaod" "Successfully aliases downloaded"
     chmod +x $ALIASES_FILE
 fi
 
