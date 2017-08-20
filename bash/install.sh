@@ -4,7 +4,8 @@ ZSH=~/.oh-my-zsh
 VIM_FOLDER=~/.vim
 ZSH_CUSTOM=~/.custom
 GIT_BASE_URI=https://raw.githubusercontent.com/Trepix/automations/master/bash
-ALIASES_FILE=$ZSH_CUSTOM/alises
+
+ALIASES_FILE=$ZSH_CUSTOM/aliases
 ENV_VARIABLES_FILE=$ZSH_CUSTOM/env_variables
 ZSHRC_FILE=~/.zshrc
 
@@ -87,15 +88,8 @@ echo "\nif [ -f ${ALIASES_FILE} ]; then \n    source ${ALIASES_FILE}\nfi" >> .zs
 #TODO: set variables from file like property file VAR#VALUE and replace it for load it
 if [ ! -f $ALIASES_FILE ]; then
    echo "Setting aliases"
-   echo alias ls=\"ls -lFgh --color=auto\" >> $ALIASES_FILE
-   echo alias lls=\"ls -laFgh --color=auto\" >> $ALIASES_FILE
-   echo alias tree=\"tree -L 1\" >> $ALIASES_FILE
-   echo alias tree2=\"tree -L 2\" >> $ALIASES_FILE
-   echo alias tree3=\"tree -L 3\" >> $ALIASES_FILE
-   echo alias tree4=\"tree -L 4\" >> $ALIASES_FILE
-   echo alias tree5=\"tree -L 5\" >> $ALIASES_FILE
-   echo alias graph=\"git log --graph --decorate --all\" >> $ALIASES_FILE
-   echo alias diff=\"diff -yBb --suppress-common-lines\" >> $ALIASES_FILE
+   DOWNLOAD=$(wget -O $ALIASES_FILE $GIT_BASE_URI/aliases 2>&1)
+   check_last_command_and_print "$DOWNLOAD" "Successfully aliases downloaded"
    chmod 744 $ALIASES_FILE
 fi
 
