@@ -30,6 +30,10 @@ echo "Installing zsh"
 INSTALL=$(sudo apt-get install zsh --yes 2>&1)
 check_last_command_and_print "$INSTALL" "Successfully zsh installed"
 
+echo "Installing tree"
+INSTALL=$(sudo apt-get install tree --yes 2>&1)
+check_last_command_and_print "$INSTALL" "Successfully tree installed"
+
 
 if [ ! -f $VIM_FOLDER/vimrc ]; then
    echo "Downloading vim configuration file"
