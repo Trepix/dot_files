@@ -36,29 +36,29 @@ check_last_command_and_print "$INSTALL" "Successfully tree installed"
 
 
 if [ ! -f $VIM_FOLDER/vimrc ]; then
-   echo "Downloading vim configuration file"
-   DOWNLOAD=$(wget -P $VIM_FOLDER $GIT_BASE_URI/vimrc 2>&1)
-   check_last_command_and_print "$DOWNLOAD" "Successfully vim configuration downloaded"
+    echo "Downloading vim configuration file"
+    DOWNLOAD=$(wget -P $VIM_FOLDER $GIT_BASE_URI/vimrc 2>&1)
+    check_last_command_and_print "$DOWNLOAD" "Successfully vim configuration downloaded"
 else
-   echo "Another vimrc file already exists in .vim folder"
+    echo "Another vimrc file already exists in .vim folder"
 fi
 
 
 if [ ! -d "$ZSH" ]; then
-   echo "Installing oh-my-zsh"
-   INSTALL=$(sh -c "$(wget --quiet -O - https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sed '/env zsh/ d')")
-   check_last_command_and_print "$INSTALL" "Successfully oh-my-zsh installed"
-   #replace in .zshrc
-   #theme
-   sed -i -E "s/.*(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
+    echo "Installing oh-my-zsh"
+    INSTALL=$(sh -c "$(wget --quiet -O - https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sed '/env zsh/ d')")
+    check_last_command_and_print "$INSTALL" "Successfully oh-my-zsh installed"
+    #replace in .zshrc
+    #theme
+    sed -i -E "s/.*(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
 
-   #plugins
-   sed -i -E "s/(plugins=.*)\)/\1 zsh-syntax-highlighting)/" $ZSHRC_FILE
+    #plugins
+    sed -i -E "s/(plugins=.*)\)/\1 zsh-syntax-highlighting)/" $ZSHRC_FILE
 
-   #custom directory
-   sed -i -E "s|.*(ZSH_CUSTOM=).*|\1$ZSH_CUSTOM|" $ZSHRC_FILE
+    #custom directory
+    sed -i -E "s|.*(ZSH_CUSTOM=).*|\1$ZSH_CUSTOM|" $ZSHRC_FILE
 else
-   echo "Another installation of ZSH exists"
+    echo "Another installation of ZSH exists"
 fi
 
 if [ ! -d $ZSH_CUSTOM/plugins ]; then
@@ -91,10 +91,10 @@ echo "\nif [ -f ${ALIASES_FILE} ]; then \n    source ${ALIASES_FILE}\nfi" >> .zs
 
 #TODO: set variables from file like property file VAR#VALUE and replace it for load it
 if [ ! -f $ALIASES_FILE ]; then
-   echo "Setting aliases"
-   DOWNLOAD=$(wget -O $ALIASES_FILE $GIT_BASE_URI/aliases 2>&1)
-   check_last_command_and_print "$DOWNLOAD" "Successfully aliases downloaded"
-   chmod 744 $ALIASES_FILE
+    echo "Setting aliases"
+    DOWNLOAD=$(wget -O $ALIASES_FILE $GIT_BASE_URI/aliases 2>&1)
+    check_last_command_and_print "$DOWNLOAD" "Successfully aliases downloaded"
+    chmod 744 $ALIASES_FILE
 fi
 
 sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" .bashrc
