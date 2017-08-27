@@ -8,6 +8,7 @@ GIT_BASE_URI=https://raw.githubusercontent.com/Trepix/automations/master/bash
 ALIASES_FILE=$ZSH_CUSTOM/aliases
 ENV_VARIABLES_FILE=$ZSH_CUSTOM/env_variables
 ZSHRC_FILE=~/.zshrc
+DEFAULT_BASH_FILE=./.bashrc 
 
 # $1: error message
 # $2: success message
@@ -23,7 +24,7 @@ check_last_command_and_print() {
 }
 
 echo "Installing git"
-INSTALL=$(sudo apt-get install git 2>&1)
+INSTALL=$(sudo apt-get install git --yes 2>&1)
 check_last_command_and_print "$INSTALL" "Successfully git installed"
 
 echo "Installing zsh"
@@ -44,18 +45,19 @@ else
 fi
 
 
+#oh-my-zsh
 if [ ! -d "$ZSH" ]; then
     echo "Installing oh-my-zsh"
     INSTALL=$(sh -c "$(wget --quiet -O - https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sed '/env zsh/ d')")
     check_last_command_and_print "$INSTALL" "Successfully oh-my-zsh installed"
-    #replace in .zshrc
-    #theme
+
+    #replace theme
     sed -i -E "s/.*(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
 
-    #plugins
+    #add plugins
     sed -i -E "s/(plugins=.*)\)/\1 zsh-syntax-highlighting)/" $ZSHRC_FILE
 
-    #custom directory
+    #set custom directory
     sed -i -E "s|.*(ZSH_CUSTOM=).*|\1$ZSH_CUSTOM|" $ZSHRC_FILE
 else
     echo "Another installation of ZSH exists"
@@ -87,7 +89,7 @@ fi
 
 
 #source aliases file
-echo "\nif [ -f ${ALIASES_FILE} ]; then \n    source ${ALIASES_FILE}\nfi" >> .zshrc
+echo "\nif [ -f ${ALIASES_FILE} ]; then \n    source ${ALIASES_FILE}\nfi" >> $ZSHRC_FILE
 
 #TODO: set variables from file like property file VAR#VALUE and replace it for load it
 if [ ! -f $ALIASES_FILE ]; then
@@ -97,5 +99,5 @@ if [ ! -f $ALIASES_FILE ]; then
     chmod 744 $ALIASES_FILE
 fi
 
-sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" .bashrc
+sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" $DEFAULT_BASH_FILE
 git config --global core.editor "vim"
