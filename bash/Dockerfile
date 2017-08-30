@@ -15,15 +15,14 @@ RUN \
 ENV USER=docker  
 ENV HOME=/home/$USER
 RUN mkdir -p $HOME && \
-    groupadd -r $USER &&\
-    useradd -r -g $USER -d $HOME -s /sbin/nologin -c "Docker image user" $USER && \
-    echo "$USER:$USER" | chpasswd && \
-    adduser $USER sudo
+    useradd -r -d $HOME -s /sbin/nologin -c "Docker image user" $USER
+
+RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 WORKDIR $HOME
 ADD install.sh $HOME/install.sh
 
-RUN chown -R $USER:$USER $HOME
+RUN chown -R $USER $HOME
 
 USER $USER
 
