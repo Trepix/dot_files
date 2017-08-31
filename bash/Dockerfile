@@ -4,6 +4,7 @@ FROM ubuntu
 RUN \
     apt-get update && \
     apt-get install --yes wget vim sudo && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 #Create <docker> user
