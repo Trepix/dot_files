@@ -11,6 +11,7 @@ ENV USER=docker
 ENV HOME=/home/$USER
 
 RUN mkdir -p $HOME && \
+    cp /etc/skel/.bashrc $HOME && \
     useradd -r -d $HOME -s /sbin/nologin -c "Docker image user" $USER && \
     echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
