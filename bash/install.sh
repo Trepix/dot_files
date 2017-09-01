@@ -48,8 +48,8 @@ fi
 #oh-my-zsh
 if [ ! -d "$ZSH" ]; then
     echo "Installing oh-my-zsh"
-    INSTALL=$(sh -c "$(wget --quiet -O - https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sed '/env zsh/ d')")
-    check_last_command_and_print "$INSTALL" "Successfully oh-my-zsh installed"
+    INSTALL=$(echo "$(wget --quiet -O - https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sed '/env zsh/ d')" | sudo bash)
+    check_last_ command_and_print "$INSTALL" "Successfully oh-my-zsh installed"
 
     #replace theme
     sed -i -E "s/.*(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
@@ -96,7 +96,7 @@ if [ ! -f $ALIASES_FILE ]; then
     echo "Setting aliases"
     DOWNLOAD=$(wget -O $ALIASES_FILE $GIT_BASE_URI/aliases 2>&1)
     check_last_command_and_print "$DOWNLOAD" "Successfully aliases downloaded"
-    chmod 744 $ALIASES_FILE
+    chmod +x $ALIASES_FILE
 fi
 
 sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" $DEFAULT_BASH_FILE
