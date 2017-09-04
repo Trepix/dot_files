@@ -23,18 +23,12 @@ check_last_command_and_print() {
     fi
 }
 
-echo "Installing git"
-INSTALL=$(sudo apt-get install git --yes 2>&1)
-check_last_command_and_print "$INSTALL" "Successfully git installed"
-
-echo "Installing zsh"
-INSTALL=$(sudo apt-get install zsh --yes 2>&1)
-check_last_command_and_print "$INSTALL" "Successfully zsh installed"
-
-echo "Installing tree"
-INSTALL=$(sudo apt-get install tree --yes 2>&1)
-check_last_command_and_print "$INSTALL" "Successfully tree installed"
-
+wget -qO- $GIT_BASE_URI/packages | while read package
+do
+    echo "Installing $package"
+    INSTALL=$(sudo apt-get install $package --yes 2>&1)
+    check_last_command_and_print "$INSTALL" "Successfully ${package} installed"
+done
 
 if [ ! -f $VIM_FOLDER/vimrc ]; then
     echo "Downloading vim configuration file"
