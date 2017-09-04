@@ -43,7 +43,7 @@ fi
 if [ ! -d "$ZSH" ]; then
     echo "Installing oh-my-zsh"
     INSTALL=$(echo "$(wget --quiet -O - https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sed '/env zsh/ d')" | sudo bash)
-    check_last_ command_and_print "$INSTALL" "Successfully oh-my-zsh installed"
+    check_last_command_and_print "$INSTALL" "Successfully oh-my-zsh installed"
 
     #replace theme
     sed -i -E "s/.*(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
