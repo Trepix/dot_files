@@ -41,8 +41,8 @@ fi
 
 #oh-my-zsh
 if [ ! -d "$ZSH" ]; then
-    echo "Installing oh-my-zsh"
-    INSTALL=$(echo "$(wget --quiet -O - https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sed '/env zsh/ d')" | sudo bash)
+    echo "Installing oh-my-zsh" 
+    INSTALL=$(git clone git://github.com/robbyrussell/oh-my-zsh.git $ZSH && cp $ZSH/templates/zshrc.zsh-template $ZSHRC_FILE)
     check_last_command_and_print "$INSTALL" "Successfully oh-my-zsh installed"
 
     #replace theme
