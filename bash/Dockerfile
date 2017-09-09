@@ -12,7 +12,8 @@ ENV HOME=/home/$USER
 
 RUN mkdir -p $HOME && \
     cp /etc/skel/.bashrc $HOME && \
-    useradd -r -d $HOME -s /sbin/nologin -c "Docker image user" $USER && \
+    cp /etc/skel/.profile $HOME && \
+    useradd -r -d $HOME -s /bin/bash -c "Docker image user" $USER && \
     echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 ADD install.sh $HOME/install.sh
