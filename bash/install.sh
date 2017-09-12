@@ -53,23 +53,13 @@ else
 fi
 
 
-echo "" && echo "Setting up oh-my-zsh configuration"
-#oh-my-zsh
-if [ ! -d "$ZSH" ]; then
-    echo "  Installing oh-my-zsh" 
-    install=$(git clone git://github.com/robbyrussell/oh-my-zsh.git $ZSH 2>&1 && cp $ZSH/templates/zshrc.zsh-template $ZSHRC_FILE)
-    check_last_command_and_print "  $install" "  Successfully oh-my-zsh installed"
-
-    #replace theme
-    sed -i -E "s/.*(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
-
-    #add plugins
-    sed -i -E "s/(plugins=.*)\)/\1 zsh-syntax-highlighting)/" $ZSHRC_FILE
-
-    #set custom directory
-    sed -i -E "s|.*(ZSH_CUSTOM=).*|\1$ZSH_CUSTOM|" $ZSHRC_FILE
+echo "" && echo "Setting up oh-my-zsh themes"
+if [ ! -d $ZSH_CUSTOM/themes ]; then
+    echo "  Downloading themes"
+    install=$(wget -P $ZSH_CUSTOM/themes/ $GIT_BASE_URI/themes/bash-for-windows.zsh-theme 2>&1)
+    check_last_command_and_print "  $install" "  Successfully themes downloaded"
 else
-    print_warning_message "  Another installation of ZSH exists"
+    print_warning_message "  Themes folder already exists. Nothing has been downloaded"
 fi
 
 echo "" && echo "Setting up oh-my-zsh plugins"
@@ -81,21 +71,10 @@ else
     print_warning_message "  Plugins folder already exists. Nothing has been installed"
 fi
 
-echo "" && echo "Setting up oh-my-zsh themes"
-if [ ! -d $ZSH_CUSTOM/themes ]; then
-    echo "  Downloading themes"
-    install=$(wget -P $ZSH_CUSTOM/themes/ $GIT_BASE_URI/themes/bash-for-windows.zsh-theme 2>&1)
-    check_last_command_and_print "  $install" "  Successfully themes downloaded"
-else
-    print_warning_message "  Themes folder already exists. Nothing has been downloaded"
-fi
 
-#source aliases file
-echo "\nif [ -f ${ALIASES_FILE} ]; then \n    source ${ALIASES_FILE}\nfi" >> $ZSHRC_FILE
-
-#TODO: set variables from file like property file VAR#VALUE and replace it for load it
+echo "" && echo "Setting up aliases"
 if [ ! -f $ALIASES_FILE ]; then
-    echo "Setting aliases"
+    echo "  Downloading aliases"
     downlaod=$(wget -O $ALIASES_FILE $GIT_BASE_URI/aliases 2>&1)
     check_last_command_and_print "  $downlaod" "  Successfully aliases downloaded"
     chmod +x $ALIASES_FILE
@@ -103,5 +82,29 @@ else
     print_warning_message "  Aliases file already exists. Nothing has been downloaded"
 fi
 
-sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" $DEFAULT_BASH_FILE
+echo "" && echo "Setting up  oh-my-zsh configuration"
+#oh-my-zsh
+if [ ! -d "$ZSH" ]; then
+    echo "  Installing oh-my-zsh" 
+    install=$(git clone git://github.com/robbyrussell/oh-my-zsh.git $ZSH 2>&1 && cp $ZSH/templates/zshrc.zsh-template $ZSHRC_FILE)
+    check_last_command_and_print "  $install" "  Successfully oh-my-zsh installed"
+
+    #set custom directory
+    sed -i -E "s|.*(ZSH_CUSTOM=).*|\1$ZSH_CUSTOM|" $ZSHRC_FILE
+
+    #replace theme
+    sed -i -E "s/.*(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
+
+    #add plugins
+    sed -i -E "s/(plugins=.*)\)/\1 zsh-syntax-highlighting)/" $ZSHRC_FILE
+
+    #source aliases file
+    echo "\nif [ -f ${ALIASES_FILE} ]; then \n    source ${ALIASES_FILE}\nfi" >> $ZSHRC_FILE
+
+    #launch zsh instead of default bash
+    sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" $DEFAULT_BASH_FILE
+else
+    print_warning_message "  Another installation of ZSH exists"
+fi
+
 git config --global core.editor "vim"
