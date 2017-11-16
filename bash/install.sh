@@ -6,7 +6,7 @@ GIT_BASE_URI=https://raw.githubusercontent.com/Trepix/automations/master/bash
 ALIASES_FILE=$ZSH_CUSTOM/aliases
 ENV_VARIABLES_FILE=$ZSH_CUSTOM/env_variables
 ZSHRC_FILE=~/.zshrc
-DEFAULT_BASH_FILE=./.bashrc 
+DEFAULT_BASH_FILE=~/.bashrc 
 
 # Colors
 Color_Off='\033[0m'       # Text Reset
@@ -93,7 +93,7 @@ if [ ! -d "$ZSH" ]; then
     sed -i -E "s|.*(ZSH_CUSTOM=).*|\1$ZSH_CUSTOM|" $ZSHRC_FILE
 
     #replace theme
-    sed -i -E "s/.*(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
+    sed -i -E "s/(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
 
     #add plugins
     sed -i -E "s/(plugins=.*)\)/\1 zsh-syntax-highlighting)/" $ZSHRC_FILE
