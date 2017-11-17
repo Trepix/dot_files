@@ -32,6 +32,17 @@ print_warning_message() {
     echo "${Yellow}${1}$Color_Off"
 }
 
+add_plugins() {
+    #Old way -> just one line [plugins=(a,b,c)]
+    #sed -i -E "s/(plugins=.*)\)/\1 zsh-syntax-highlighting)/" $ZSHRC_FILE
+
+    ZSH_PLUGINS=$(wget -qO- $GIT_BASE_URI/oh-my-zsh-plugins)
+    ZSH_PLUGINS_SEPARATED_BY_SPACE=$(echo "${ZSH_PLUGINS}"|tr "\n" " ")
+    perl -i -pE "BEGIN{undef $/;} s/(plugins=\(.*\n).*git(\n\))/\1${ZSH_PLUGINS}\2/g" $ZSHRC_FILE
+    check_last_command_and_print "  Can't add desired oficial plugins" "  Added oficial plugins"
+    echo "    ${ZSH_PLUGINS_SEPARATED_BY_SPACE}"
+}
+
 echo "Installing packages"
 wget -qO- $GIT_BASE_URI/packages | while read package
 do
@@ -103,20 +114,26 @@ if [ ! -d "$ZSH" ]; then
 
     #set custom directory
     sed -i -E "s|.*(ZSH_CUSTOM=).*|\1$ZSH_CUSTOM|" $ZSHRC_FILE
+    check_last_command_and_print "  Not able to set custom repository folder" "  Custom oh-my-zsh repository setted"
 
     #replace theme
     sed -i -E "s/(ZSH_THEME=).*/\1bash-for-windows/" $ZSHRC_FILE
+    check_last_command_and_print "  Not able to replace zsh theme" "  Zsh theme replaced"
 
     #add plugins
-    sed -i -E "s/(plugins=.*)\)/\1 zsh-syntax-highlighting)/" $ZSHRC_FILE
+    add_plugins
 
     #source aliases file
     echo "\nif [ -f ${ALIASES_FILE} ]; then \n    source ${ALIASES_FILE}\nfi" >> $ZSHRC_FILE
+    check_last_command_and_print "  Can't add to zsh environment the aliases" "  Added aliases definition to zsh"
+
     #source env_vars file
     echo "\nif [ -f ${ENVVARS_FILE} ]; then \n    source ${ENVVARS_FILE}\nfi" >> $ZSHRC_FILE
+    check_last_command_and_print "  Can't add to zsh environment the environment variables defintion" "  Added environment variables definition to zsh"
 
     #launch zsh instead of default bash
     sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" $DEFAULT_BASH_FILE
+    check_last_command_and_print "  Can't replace bash for zsh by default" "  Replaced bash for zsh by default"
 else
     print_warning_message "  Another installation of ZSH exists"
 fi
