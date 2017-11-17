@@ -4,6 +4,7 @@ ZSH_CUSTOM=~/.custom
 GIT_BASE_URI=https://raw.githubusercontent.com/Trepix/automations/master/bash
 
 ALIASES_FILE=$ZSH_CUSTOM/aliases
+ENVVARS_FILE=$ZSH_CUSTOM/env_vars
 ENV_VARIABLES_FILE=$ZSH_CUSTOM/env_variables
 ZSHRC_FILE=~/.zshrc
 DEFAULT_BASH_FILE=~/.bashrc 
@@ -82,7 +83,18 @@ else
     print_warning_message "  Aliases file already exists. Nothing has been downloaded"
 fi
 
-echo "" && echo "Setting up  oh-my-zsh configuration"
+
+echo "" && echo "Setting up envvars"
+if [ ! -f $ENVVARS_FILE ]; then
+    touch $ENVVARS_FILE
+    check_last_command_and_print "  Can't create envvars file" "  Successfully envvars file created"
+    chmod +x $ENVVARS_FILE
+else
+    print_warning_message "  Environment variables file already exists. Nothing has been created"
+fi
+
+
+echo "" && echo "Setting up oh-my-zsh configuration"
 #oh-my-zsh
 if [ ! -d "$ZSH" ]; then
     echo "  Installing oh-my-zsh" 
@@ -100,6 +112,8 @@ if [ ! -d "$ZSH" ]; then
 
     #source aliases file
     echo "\nif [ -f ${ALIASES_FILE} ]; then \n    source ${ALIASES_FILE}\nfi" >> $ZSHRC_FILE
+    #source env_vars file
+    echo "\nif [ -f ${ENVVARS_FILE} ]; then \n    source ${ENVVARS_FILE}\nfi" >> $ZSHRC_FILE
 
     #launch zsh instead of default bash
     sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" $DEFAULT_BASH_FILE
