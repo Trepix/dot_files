@@ -62,6 +62,7 @@ plugins=(
     zsh-syntax-highlighting
     git
     docker
+    terraform
 )
 
 source $OH_MY_ZSH/oh-my-zsh.sh
