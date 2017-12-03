@@ -1,4 +1,5 @@
 OH_MY_ZSH=~/.oh-my-zsh
+FZF=~/.fzf
 VIM_FOLDER=~/.vim
 OH_MY_ZSH_CUSTOM=~/.custom
 GIT_BASE_URI=https://raw.githubusercontent.com/Trepix/automations/master/bash
@@ -57,8 +58,8 @@ fi
 echo "" && echo "Setting up oh-my-zsh themes"
 if [ ! -d $OH_MY_ZSH_CUSTOM/themes ]; then
     echo "  Downloading themes"
-    install=$(wget -P $OH_MY_ZSH_CUSTOM/themes/ $GIT_BASE_URI/themes/bash-for-windows.zsh-theme 2>&1)
-    check_last_command_and_print "  $install" "  Successfully themes downloaded"
+    download=$(wget -P $OH_MY_ZSH_CUSTOM/themes/ $GIT_BASE_URI/themes/bash-for-windows.zsh-theme 2>&1)
+    check_last_command_and_print "  $download" "  Successfully themes downloaded"
 else
     print_warning_message "  Themes folder already exists. Nothing has been downloaded"
 fi
@@ -66,8 +67,8 @@ fi
 echo "" && echo "Setting up oh-my-zsh plugins"
 if [ ! -d $OH_MY_ZSH_CUSTOM/plugins ]; then
     echo "  Downloading oh-my-zsh highlights"
-    install=$(git clone https://github.com/zsh-users/zsh-syntax-highlighting.git 2>&1 ${OH_MY_ZSH_CUSTOM}/plugins/zsh-syntax-highlighting)
-    check_last_command_and_print "  $install" "  Successfully zsh-syntax-highlighting downloaded"
+    download=$(git clone https://github.com/zsh-users/zsh-syntax-highlighting.git 2>&1 ${OH_MY_ZSH_CUSTOM}/plugins/zsh-syntax-highlighting)
+    check_last_command_and_print "  $download" "  Successfully zsh-syntax-highlighting downloaded"
 else
     print_warning_message "  Plugins folder already exists. Nothing has been installed"
 fi
@@ -98,8 +99,8 @@ echo "" && echo "Setting up oh-my-zsh configuration"
 #oh-my-zsh
 if [ ! -d "$OH_MY_ZSH" ]; then
     echo "  Installing oh-my-zsh" 
-    install=$(git clone git://github.com/robbyrussell/oh-my-zsh.git $OH_MY_ZSH 2>&1)
-    check_last_command_and_print "  $install" "  Successfully oh-my-zsh repository cloned"
+    download=$(git clone git://github.com/robbyrussell/oh-my-zsh.git $OH_MY_ZSH 2>&1)
+    check_last_command_and_print "  $download" "  Successfully oh-my-zsh repository cloned"
 
     if [ ! -d "$ZSHRC_FILE" ]; then      
         download=$(wget -P $OH_MY_ZSH_CUSTOM/ $GIT_BASE_URI/zshrc.template 2>&1)
@@ -114,7 +115,19 @@ if [ ! -d "$OH_MY_ZSH" ]; then
     sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" $DEFAULT_BASH_FILE
     check_last_command_and_print "  Can't replace bash for zsh by default" "  Replaced bash for zsh by default"
 else
-    print_warning_message "  Another installation of ZSH exists"
+    print_warning_message "  Another installation of oh-my-zsh exists"
+fi
+
+
+echo "" && echo "Setting up fzf configuration"
+if [ ! -d "$FZF" ]; then
+    echo "  Installing fzf" 
+    download=$(git clone --depth 1 https://github.com/junegunn/fzf.git $FZF 2>&1)
+    check_last_command_and_print "  $download" "  Successfully fzf repository cloned"
+    install=$(${FZF}/install --key-bindings --no-completion --update-rc 2>&1)
+    check_last_command_and_print "  $install" "  Successfully fzf installed"
+else
+    print_warning_message "  Another installation of fzf exists"
 fi
 
 git config --global core.editor "vim"
