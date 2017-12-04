@@ -8,7 +8,7 @@ HOME=~ #forced variable for zshrc-template
 ALIASES_FILE=$OH_MY_ZSH_CUSTOM/aliases
 ENV_VARIABLES_FILE=$OH_MY_ZSH_CUSTOM/env_variables
 ZSHRC_FILE=~/.zshrc
-DEFAULT_BASH_FILE=~/.bashrc 
+BASH_FILE=~/.bashrc 
 
 # Colors
 Color_Off='\033[0m'       # Text Reset
@@ -102,7 +102,7 @@ if [ ! -d "$OH_MY_ZSH" ]; then
     download=$(git clone git://github.com/robbyrussell/oh-my-zsh.git $OH_MY_ZSH 2>&1)
     check_last_command_and_print "  $download" "  Successfully oh-my-zsh repository cloned"
 
-    if [ ! -d "$ZSHRC_FILE" ]; then      
+    if [ ! -f "$ZSHRC_FILE" ]; then      
         download=$(wget -P $OH_MY_ZSH_CUSTOM/ $GIT_BASE_URI/zshrc.template 2>&1)
         check_last_command_and_print "  $downlaod" "  Successfully .zshrc template downloaded"
         export OH_MY_ZSH_CUSTOM ENV_VARIABLES_FILE ALIASES_FILE OH_MY_ZSH
@@ -112,8 +112,13 @@ if [ ! -d "$OH_MY_ZSH" ]; then
     fi
 
     #launch zsh instead of default bash
-    sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" $DEFAULT_BASH_FILE
-    check_last_command_and_print "  Can't replace bash for zsh by default" "  Replaced bash for zsh by default"
+    if [ "$(grep 'exec zsh' $BASH_FILE)"  ]; then
+        print_warning_message "  Zsh's default execution has already set up"
+    else
+        sed -i "1i# Launch Zsh \nif [ -t 1 ]; then\n    exec zsh\nfi" $BASH_FILE
+        check_last_command_and_print "  Can't replace bash for zsh by default" "  Replaced bash for zsh by default"
+    fi
+
 else
     print_warning_message "  Another installation of oh-my-zsh exists"
 fi
