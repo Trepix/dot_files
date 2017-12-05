@@ -4,7 +4,7 @@ FROM ubuntu
 RUN \
     apt-get update && \
     apt-get install --yes wget vim sudo && \
-    apt-get install --yes git zsh tree tmux gettext && \
+    apt-get install --yes git zsh tree tmux gettext unzip curl && \
     apt-get clean
 
 #Create <docker> user
