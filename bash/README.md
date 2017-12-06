@@ -16,3 +16,10 @@ Execute inside the container:
 ```sh
     sh -c "$(cat install.sh)"
 ```
+
+## Run quick test environment
+
+Run the script:
+```bash
+    ./docker-quick.sh
+```
