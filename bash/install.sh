@@ -63,6 +63,19 @@ fi
 # ________________________________________________________________________
 # ________________________________________________________________________
 
+
+echo "" && echo "Setting up tmux configuration"
+if [ ! -f $VIM_FOLDER/.tmux.conf ]; then
+    echo "  Downloading .tmux.conf configuration file"
+    download=$(wget -P ~ $GIT_BASE_URI/.tmux.conf 2>&1)
+    check_last_command_and_print "  ${download}" "  Successfully tmux configuration downloaded"
+else
+    print_warning_message "  Another .tmux.conf file already exists in home folder"
+fi
+
+# ________________________________________________________________________
+# ________________________________________________________________________
+
 echo "" && echo "Setting up oh-my-zsh themes"
 if [ ! -d $OH_MY_ZSH_CUSTOM/themes ]; then
     echo "  Downloading themes"
