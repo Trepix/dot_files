@@ -190,5 +190,32 @@ else
     print_warning_message "  Terraform and tfenv's symlinks already exists"
 fi
 
+# ________________________________________________________________________
+# ________________________________________________________________________
+
+echo "" && echo "Installing python ecosystem"
+#pip pip3
+download=$(wget -P $TEMPORAL_FOLDER/ https://bootstrap.pypa.io/get-pip.py 2>&1)
+check_last_command_and_print "  ${download}" "  Successfully downloaded get-pip.py script"
+
+if [ -z "$(hash pip 2>&1)" ]; then
+    print_warning_message "  pip is already installed"
+else
+    echo "  Installing pip"
+    install=$(sudo python $TEMPORAL_FOLDER/get-pip.py 2>&1)
+    check_last_command_and_print "  ${install}" "  Successfully pip installed"
+fi
+
+
+if [ -z "$(hash pip3 2>&1)" ]; then
+    print_warning_message "  pip3 is already installed"
+else
+    echo "  Installing pip3"
+    install=$(sudo python3 $TEMPORAL_FOLDER/get-pip.py  2>&1)
+    check_last_command_and_print "  ${install}" "  Successfully pip3 installed"
+fi
+
+# ________________________________________________________________________
+# ________________________________________________________________________
 
 git config --global core.editor "vim"
