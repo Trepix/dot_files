@@ -65,7 +65,7 @@ fi
 
 
 echo "" && echo "Setting up tmux configuration"
-if [ ! -f $VIM_FOLDER/.tmux.conf ]; then
+if [ ! -f ~/.tmux.conf ]; then
     echo "  Downloading .tmux.conf configuration file"
     download=$(wget -P ~ $GIT_BASE_URI/.tmux.conf 2>&1)
     check_last_command_and_print "  ${download}" "  Successfully tmux configuration downloaded"
