@@ -10,6 +10,8 @@ ENV_VARIABLES_FILE=$OH_MY_ZSH_CUSTOM/env_variables
 ZSHRC_FILE=~/.zshrc
 BASH_FILE=~/.bashrc 
 
+TEMPORAL_FOLDER=$(mktemp -d)
+
 # Colors
 Color_Off='\033[0m'       # Text Reset
 Red='\033[0;31m'          # Red
@@ -137,10 +139,10 @@ fi
 
 # .zshrc file
 if [ ! -f "$ZSHRC_FILE" ]; then      
-    download=$(wget -P $OH_MY_ZSH_CUSTOM/ $GIT_BASE_URI/zshrc.template 2>&1)
+    download=$(wget -P $TEMPORAL_FOLDER/ $GIT_BASE_URI/zshrc.template 2>&1)
     check_last_command_and_print "  $downlaod" "  Successfully .zshrc template downloaded"
     export OH_MY_ZSH_CUSTOM ENV_VARIABLES_FILE ALIASES_FILE OH_MY_ZSH
-    envsubst < $OH_MY_ZSH_CUSTOM/zshrc.template > $ZSHRC_FILE
+    envsubst < $TEMPORAL_FOLDER/zshrc.template > $ZSHRC_FILE
 else
     print_warning_message "  Another .zshrc file is detected nothing is replaced"
 fi
