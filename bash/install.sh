@@ -3,14 +3,12 @@ FZF=~/.fzf
 VIM_FOLDER=~/.vim
 OH_MY_ZSH_CUSTOM=~/.custom
 TFENV=~/.tfenv
-GIT_BASE_URI=https://raw.githubusercontent.com/Trepix/automations/master/bash
+GIT_REPOSITORY_URI=https://github.com/Trepix/automations.git
 
 ALIASES_FILE=$OH_MY_ZSH_CUSTOM/aliases
 ENV_VARIABLES_FILE=$OH_MY_ZSH_CUSTOM/env_variables
 ZSHRC_FILE=~/.zshrc
 BASH_FILE=~/.bashrc 
-
-TEMPORAL_FOLDER=$(mktemp -d)
 
 # Colors
 Color_Off='\033[0m'       # Text Reset
@@ -35,11 +33,24 @@ print_warning_message() {
     echo "${Yellow}${1}$Color_Off"
 }
 
+if [ -z ${AUTOMATIONS_BASH_TMP_FOLDER+x} ]; then
+    AUTOMATIONS_TMP_FOLDER=$(mktemp -d)
+    echo "Installing essential git package"
+
+    install=$(sudo apt-get install git --yes 2>&1)
+    check_last_command_and_print "  ${install}" "  Successfully git installed"
+
+    clone=$(git clone $GIT_REPOSITORY_URI $AUTOMATIONS_TMP_FOLDER 2>&1)
+    check_last_command_and_print "  ${clone}" "  Successfully automations repository cloned"
+
+    AUTOMATIONS_BASH_TMP_FOLDER=$AUTOMATIONS_TMP_FOLDER/bash
+fi
+
 # ________________________________________________________________________
 # ________________________________________________________________________
 
 echo "Installing packages"
-wget -qO- $GIT_BASE_URI/packages | while read package
+cat $AUTOMATIONS_BASH_TMP_FOLDER/packages | while read package
 do
     if [ -z "$(hash $package 2>&1)" ]; then
         print_warning_message "  $package is already installed"
@@ -56,7 +67,7 @@ done
 echo "" && echo "Setting up vim configuration"
 if [ ! -f $VIM_FOLDER/vimrc ]; then
     echo "  Downloading vim configuration file"
-    download=$(wget -P $VIM_FOLDER $GIT_BASE_URI/vimrc 2>&1)
+    download=$(mkdir $VIM_FOLDER && cp $AUTOMATIONS_BASH_TMP_FOLDER/vimrc $VIM_FOLDER 2>&1)
     check_last_command_and_print "  ${download}" "  Successfully vim configuration downloaded"
 else
     print_warning_message "  Another vimrc file already exists in .vim folder"
@@ -69,7 +80,7 @@ fi
 echo "" && echo "Setting up tmux configuration"
 if [ ! -f ~/.tmux.conf ]; then
     echo "  Downloading .tmux.conf configuration file"
-    download=$(wget -P ~ $GIT_BASE_URI/.tmux.conf 2>&1)
+    download=$(cp $AUTOMATIONS_BASH_TMP_FOLDER/.tmux.conf ~ 2>&1)
     check_last_command_and_print "  ${download}" "  Successfully tmux configuration downloaded"
 else
     print_warning_message "  Another .tmux.conf file already exists in home folder"
@@ -78,16 +89,17 @@ fi
 # ________________________________________________________________________
 # ________________________________________________________________________
 
+[ -d $OH_MY_ZSH_CUSTOM ] || mkdir $OH_MY_ZSH_CUSTOM
+
 echo "" && echo "Setting up oh-my-zsh themes"
 if [ ! -d $OH_MY_ZSH_CUSTOM/themes ]; then
     echo "  Downloading themes"
-    download=$(wget -P $OH_MY_ZSH_CUSTOM/themes/ $GIT_BASE_URI/themes/bash-for-windows.zsh-theme 2>&1)
+    download=$(mkdir $OH_MY_ZSH_CUSTOM/themes && cp $AUTOMATIONS_BASH_TMP_FOLDER/themes/* $OH_MY_ZSH_CUSTOM/themes/ 2>&1)
     check_last_command_and_print "  $download" "  Successfully themes downloaded"
 else
     print_warning_message "  Themes folder already exists. Nothing has been downloaded"
 fi
 
-# ________________________________________________________________________
 # ________________________________________________________________________
 
 echo "" && echo "Setting up oh-my-zsh plugins"
@@ -100,19 +112,17 @@ else
 fi
 
 # ________________________________________________________________________
-# ________________________________________________________________________
 
 echo "" && echo "Setting up aliases"
 if [ ! -f $ALIASES_FILE ]; then
     echo "  Downloading aliases"
-    downlaod=$(wget -O $ALIASES_FILE $GIT_BASE_URI/aliases 2>&1)
+    downlaod=$(cp $AUTOMATIONS_BASH_TMP_FOLDER/aliases $ALIASES_FILE 2>&1)
     check_last_command_and_print "  $downlaod" "  Successfully aliases downloaded"
     chmod +x $ALIASES_FILE
 else
     print_warning_message "  Aliases file already exists. Nothing has been downloaded"
 fi
 
-# ________________________________________________________________________
 # ________________________________________________________________________
 
 echo "" && echo "Setting up envvars"
@@ -124,7 +134,6 @@ else
     print_warning_message "  Environment variables file already exists. Nothing has been created"
 fi
 
-# ________________________________________________________________________
 # ________________________________________________________________________
 
 echo "" && echo "Setting up oh-my-zsh configuration"
@@ -139,10 +148,9 @@ fi
 
 # .zshrc file
 if [ ! -f "$ZSHRC_FILE" ]; then      
-    download=$(wget -P $TEMPORAL_FOLDER/ $GIT_BASE_URI/zshrc.template 2>&1)
-    check_last_command_and_print "  $downlaod" "  Successfully .zshrc template downloaded"
     export OH_MY_ZSH_CUSTOM ENV_VARIABLES_FILE ALIASES_FILE OH_MY_ZSH
-    envsubst < $TEMPORAL_FOLDER/zshrc.template > $ZSHRC_FILE
+    envsubst=$(envsubst < $AUTOMATIONS_BASH_TMP_FOLDER/zshrc.template > $ZSHRC_FILE)
+    check_last_command_and_print "  $envsubst" "  Successfully .zshrc file placed on ${HOME} folder"
 else
     print_warning_message "  Another .zshrc file is detected nothing is replaced"
 fi
@@ -195,14 +203,14 @@ fi
 
 echo "" && echo "Installing python ecosystem"
 #pip pip3
-download=$(wget -P $TEMPORAL_FOLDER/ https://bootstrap.pypa.io/get-pip.py 2>&1)
+download=$(wget -P $AUTOMATIONS_BASH_TMP_FOLDER/ https://bootstrap.pypa.io/get-pip.py 2>&1)
 check_last_command_and_print "  ${download}" "  Successfully downloaded get-pip.py script"
 
 if [ -z "$(hash pip 2>&1)" ]; then
     print_warning_message "  pip is already installed"
 else
     echo "  Installing pip"
-    install=$(sudo python $TEMPORAL_FOLDER/get-pip.py 2>&1)
+    install=$(sudo python $AUTOMATIONS_BASH_TMP_FOLDER/get-pip.py 2>&1)
     check_last_command_and_print "  ${install}" "  Successfully pip installed"
 fi
 
@@ -211,7 +219,7 @@ if [ -z "$(hash pip3 2>&1)" ]; then
     print_warning_message "  pip3 is already installed"
 else
     echo "  Installing pip3"
-    install=$(sudo python3 $TEMPORAL_FOLDER/get-pip.py  2>&1)
+    install=$(sudo python3 $AUTOMATIONS_BASH_TMP_FOLDER/get-pip.py  2>&1)
     check_last_command_and_print "  ${install}" "  Successfully pip3 installed"
 fi
 

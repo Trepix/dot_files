@@ -2,9 +2,11 @@
 
 ## Run test environment
 
-Build image:
+Test environment allows to test features without having to upload it to  public repository. Source folder is copied in a temporal directory like if was cloned with git, which is how production environment works.
+
+Build image (being in /bash directory):
 ```docker
-    docker build -t automations . 
+    docker build -t automations --file ./test/Dockerfile .
 ```
 
 Run container:
@@ -17,7 +19,7 @@ Execute inside the container:
     sh -c "$(cat install.sh)"
 ```
 
-## Run quick test environment
+## _(deprecated for now)_ Run quick test environment
 
 Run the script:
 ```bash
