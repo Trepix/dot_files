@@ -10,29 +10,6 @@ ENV_VARIABLES_FILE=$OH_MY_ZSH_CUSTOM/env_variables
 ZSHRC_FILE=~/.zshrc
 BASH_FILE=~/.bashrc 
 
-# Colors
-Color_Off='\033[0m'       # Text Reset
-Red='\033[0;31m'          # Red
-Green='\033[0;32m'        # Green
-Yellow='\033[38;5;214m'   # Yellow
-
-# $1: error message
-# $2: success message
-check_last_command_and_print() {
-    if [ $? -eq 0 ]; then
-        if [ ! -z "$2" ]; then
-            echo "${Green}${2}$Color_Off"
-        fi
-    else
-	echo "$Red${1}$Color_Off"
-	exit -1
-    fi
-}
-
-print_warning_message() {
-    echo "${Yellow}${1}$Color_Off"
-}
-
 if [ -z ${AUTOMATIONS_BASH_TMP_FOLDER+x} ]; then
     AUTOMATIONS_TMP_FOLDER=$(mktemp -d)
     echo "Installing essential git package"
@@ -45,6 +22,9 @@ if [ -z ${AUTOMATIONS_BASH_TMP_FOLDER+x} ]; then
 
     AUTOMATIONS_BASH_TMP_FOLDER=$AUTOMATIONS_TMP_FOLDER/bash
 fi
+
+#import commons function
+. $AUTOMATIONS_BASH_TMP_FOLDER/functions/commons.sh
 
 # ________________________________________________________________________
 # ________________________________________________________________________
