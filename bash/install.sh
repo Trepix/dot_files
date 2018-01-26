@@ -8,7 +8,9 @@ GIT_REPOSITORY_URI=https://github.com/Trepix/automations.git
 ALIASES_FILE=$OH_MY_ZSH_CUSTOM/aliases
 ENV_VARIABLES_FILE=$OH_MY_ZSH_CUSTOM/env_variables
 ZSHRC_FILE=~/.zshrc
-BASH_FILE=~/.bashrc 
+BASH_FILE=~/.bashrc
+
+REPLACE="false" 
 
 if [ -z ${AUTOMATIONS_BASH_TMP_FOLDER+x} ]; then
     AUTOMATIONS_TMP_FOLDER=$(mktemp -d)
@@ -25,6 +27,7 @@ fi
 
 #import commons function
 . $AUTOMATIONS_BASH_TMP_FOLDER/functions/commons.sh
+. $AUTOMATIONS_BASH_TMP_FOLDER/functions/python.sh
 
 # ________________________________________________________________________
 # ________________________________________________________________________
@@ -44,27 +47,24 @@ done
 # ________________________________________________________________________
 # ________________________________________________________________________
 
-echo "" && echo "Setting up vim configuration"
-if [ ! -f $VIM_FOLDER/vimrc ]; then
-    echo "  Downloading vim configuration file"
+
+configure_vim()    {
+    echo "  Downloading vimrc file"    
     download=$(mkdir $VIM_FOLDER && cp $AUTOMATIONS_BASH_TMP_FOLDER/vimrc $VIM_FOLDER 2>&1)
     check_last_command_and_print "  ${download}" "  Successfully vim configuration downloaded"
-else
-    print_warning_message "  Another vimrc file already exists in .vim folder"
-fi
+}
+
+check_and_configure_or_replace_file $VIM_FOLDER/vimrc "vim" "  Another vimrc file already exists in .vim folder"  $REPLACE
 
 # ________________________________________________________________________
-# ________________________________________________________________________
 
-
-echo "" && echo "Setting up tmux configuration"
-if [ ! -f ~/.tmux.conf ]; then
-    echo "  Downloading .tmux.conf configuration file"
+configure_tmux() {
+    echo "  Downloading .tmux.conf file"    
     download=$(cp $AUTOMATIONS_BASH_TMP_FOLDER/.tmux.conf ~ 2>&1)
     check_last_command_and_print "  ${download}" "  Successfully tmux configuration downloaded"
-else
-    print_warning_message "  Another .tmux.conf file already exists in home folder"
-fi
+}
+
+check_and_configure_or_replace_file ~/.tmux.conf "tmux" "  Another .tmux.conf file already exists in home folder" $REPLACE
 
 # ________________________________________________________________________
 # ________________________________________________________________________
@@ -93,26 +93,24 @@ fi
 
 # ________________________________________________________________________
 
-echo "" && echo "Setting up aliases"
-if [ ! -f $ALIASES_FILE ]; then
+configure_aliases() {
     echo "  Downloading aliases"
     downlaod=$(cp $AUTOMATIONS_BASH_TMP_FOLDER/aliases $ALIASES_FILE 2>&1)
     check_last_command_and_print "  $downlaod" "  Successfully aliases downloaded"
     chmod +x $ALIASES_FILE
-else
-    print_warning_message "  Aliases file already exists. Nothing has been downloaded"
-fi
+}
+
+check_and_configure_or_replace_file $ALIASES_FILE "aliases" "  Aliases file already exists. Nothing has been downloaded" $REPLACE
 
 # ________________________________________________________________________
 
-echo "" && echo "Setting up envvars"
-if [ ! -f $ENV_VARIABLES_FILE ]; then
+configure_envvars() {
     touch $ENV_VARIABLES_FILE
     check_last_command_and_print "  Can't create envvars file" "  Successfully envvars file created"
     chmod +x $ENV_VARIABLES_FILE
-else
-    print_warning_message "  Environment variables file already exists. Nothing has been created"
-fi
+}
+
+check_and_configure_or_replace_file $ENV_VARIABLES_FILE "envvars" "  Environment variables file already exists. Nothing has been created" $REPLACE
 
 # ________________________________________________________________________
 
@@ -127,13 +125,14 @@ else
 fi
 
 # .zshrc file
-if [ ! -f "$ZSHRC_FILE" ]; then      
+configure_zshrc() {
     export OH_MY_ZSH_CUSTOM ENV_VARIABLES_FILE ALIASES_FILE OH_MY_ZSH
     envsubst=$(envsubst < $AUTOMATIONS_BASH_TMP_FOLDER/zshrc.template > $ZSHRC_FILE)
     check_last_command_and_print "  $envsubst" "  Successfully .zshrc file placed on ${HOME} folder"
-else
-    print_warning_message "  Another .zshrc file is detected nothing is replaced"
-fi
+}
+
+check_and_configure_or_replace_file $ZSHRC_FILE "zshrc" "  Another .zshrc file is detected nothing is replaced" $REPLACE
+
 
 # launch zsh instead of default bash
 if [ "$(grep 'exec zsh' $BASH_FILE)"  ]; then
@@ -182,26 +181,12 @@ fi
 # ________________________________________________________________________
 
 echo "" && echo "Installing python ecosystem"
-#pip pip3
+
 download=$(wget -P $AUTOMATIONS_BASH_TMP_FOLDER/ https://bootstrap.pypa.io/get-pip.py 2>&1)
 check_last_command_and_print "  ${download}" "  Successfully downloaded get-pip.py script"
 
-if [ -z "$(hash pip 2>&1)" ]; then
-    print_warning_message "  pip is already installed"
-else
-    echo "  Installing pip"
-    install=$(sudo python $AUTOMATIONS_BASH_TMP_FOLDER/get-pip.py 2>&1)
-    check_last_command_and_print "  ${install}" "  Successfully pip installed"
-fi
-
-
-if [ -z "$(hash pip3 2>&1)" ]; then
-    print_warning_message "  pip3 is already installed"
-else
-    echo "  Installing pip3"
-    install=$(sudo python3 $AUTOMATIONS_BASH_TMP_FOLDER/get-pip.py  2>&1)
-    check_last_command_and_print "  ${install}" "  Successfully pip3 installed"
-fi
+install_python_ecosystem "pip" "python"
+install_python_ecosystem "pip3" "python3"
 
 # ________________________________________________________________________
 # ________________________________________________________________________

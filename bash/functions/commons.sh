@@ -20,3 +20,24 @@ check_last_command_and_print() {
 print_warning_message() {
     echo "${Yellow}${1}$Color_Off"
 }
+
+
+check_and_configure_or_replace_file() {
+    file_path=$1
+    name=$2
+    warning_message=$3
+    have_to_replace=$4 #( true | false )
+    
+    echo "" && echo "Setting up $name"
+    if [ ! -f $file_path ]; then
+        eval "configure_$name"
+    else 
+        if [ $have_to_replace == "true" ]; then
+            echo "do something"
+            # rm -f $file_path
+            # eval "install_$name"
+        else
+            print_warning_message $warning_message
+        fi
+    fi
+}
