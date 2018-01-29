@@ -10,7 +10,7 @@ ENV_VARIABLES_FILE=$OH_MY_ZSH_CUSTOM/env_variables
 ZSHRC_FILE=~/.zshrc
 BASH_FILE=~/.bashrc
 
-REPLACE="false" 
+REPLACE="true" 
 
 if [ -z ${AUTOMATIONS_BASH_TMP_FOLDER+x} ]; then
     AUTOMATIONS_TMP_FOLDER=$(mktemp -d)
@@ -47,10 +47,11 @@ done
 # ________________________________________________________________________
 # ________________________________________________________________________
 
+[ -d $VIM_FOLDER ] || mkdir $VIM_FOLDER
 
 configure_vim()    {
     echo "  Downloading vimrc file"    
-    download=$(mkdir $VIM_FOLDER && cp $AUTOMATIONS_BASH_TMP_FOLDER/vimrc $VIM_FOLDER 2>&1)
+    download=$(cp $AUTOMATIONS_BASH_TMP_FOLDER/vimrc $VIM_FOLDER 2>&1)
     check_last_command_and_print "  ${download}" "  Successfully vim configuration downloaded"
 }
 

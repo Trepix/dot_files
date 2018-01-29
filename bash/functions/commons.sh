@@ -21,7 +21,6 @@ print_warning_message() {
     echo "${Yellow}${1}$Color_Off"
 }
 
-
 check_and_configure_or_replace_file() {
     file_path=$1
     name=$2
@@ -32,10 +31,16 @@ check_and_configure_or_replace_file() {
     if [ ! -f $file_path ]; then
         eval "configure_$name"
     else 
-        if [ $have_to_replace == "true" ]; then
-            echo "do something"
-            # rm -f $file_path
-            # eval "install_$name"
+        if [ $have_to_replace = "true" ]; then
+            while
+                read -p "Do you want really to override $file_path [Y|n]: " override 
+                override=${override:-Y}
+                [ $override != "Y" ] && [ $override != "n" ]
+            do :; done
+            if [ $override = "Y" ]; then
+                rm -f $file_path
+                eval "configure_$name"
+            fi
         else
             print_warning_message $warning_message
         fi
