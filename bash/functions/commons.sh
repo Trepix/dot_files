@@ -33,11 +33,11 @@ check_and_configure_or_replace_file() {
     else 
         if [ $have_to_replace = "true" ]; then
             while
-                read -p "Do you want really to override $file_path [Y|n]: " override 
-                override=${override:-Y}
-                [ $override != "Y" ] && [ $override != "n" ]
+                read -p "Do you really want to override $file_path [Y/n]: " override 
+                override=$( echo ${override:-y} | tr '[:upper:]' '[:lower:]' )
+                [ $override != "y" ] && [ $override != "n" ]
             do :; done
-            if [ $override = "Y" ]; then
+            if [ $override = "y" ]; then
                 rm -f $file_path
                 eval "configure_$name"
             fi
