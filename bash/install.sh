@@ -12,6 +12,25 @@ BASH_FILE=~/.bashrc
 
 REPLACE="true" 
 
+# Colors
+Color_Off='\033[0m'       # Text Reset
+Red='\033[0;31m'          # Red
+Green='\033[0;32m'        # Green
+
+# $1: error message
+# $2: success message
+check_last_command_and_print() {
+    if [ $? -eq 0 ]; then
+        if [ ! -z "$2" ]; then
+            echo "${Green}${2}$Color_Off"
+        fi
+    else
+        echo "$Red${1}$Color_Off"
+        exit -1
+    fi
+}
+
+
 if [ -z ${AUTOMATIONS_BASH_TMP_FOLDER+x} ]; then
     AUTOMATIONS_TMP_FOLDER=$(mktemp -d)
     echo "Installing essential git package"
@@ -105,13 +124,13 @@ check_and_configure_or_replace_file $ALIASES_FILE "aliases" "  Aliases file alre
 
 # ________________________________________________________________________
 
-configure_envvars() {
+configure_env_variables() {
     touch $ENV_VARIABLES_FILE
-    check_last_command_and_print "  Can't create envvars file" "  Successfully envvars file created"
+    check_last_command_and_print "  Can't create env_variables file" "  Successfully envvars file created"
     chmod +x $ENV_VARIABLES_FILE
 }
 
-check_and_configure_or_replace_file $ENV_VARIABLES_FILE "envvars" "  Environment variables file already exists. Nothing has been created" $REPLACE
+check_and_configure_or_replace_file $ENV_VARIABLES_FILE "env_variables" "  Environment variables file already exists. Nothing has been created" $REPLACE
 
 # ________________________________________________________________________
 
