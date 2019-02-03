@@ -9,7 +9,7 @@ RUN \
 #Create <docker> user
 ENV USER=docker  
 ENV HOME=/home/$USER
-ENV AUTOMATIONS_BASH_TMP_FOLDER=/tmp/automations
+ENV DOT_FILES_BASH_TMP_FOLDER=/tmp/dot_files
 
 RUN mkdir -p $HOME && \
     cp /etc/skel/.bashrc $HOME && \
@@ -17,11 +17,11 @@ RUN mkdir -p $HOME && \
     useradd -r -d $HOME -s /bin/bash -c "Docker image user" $USER && \
     echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-ADD . $AUTOMATIONS_BASH_TMP_FOLDER 
+ADD . $DOT_FILES_BASH_TMP_FOLDER 
 ADD install.sh $HOME/install.sh
 
 RUN chown -R $USER $HOME
-RUN chown -R $USER $AUTOMATIONS_BASH_TMP_FOLDER
+RUN chown -R $USER $DOT_FILES_BASH_TMP_FOLDER
 
 WORKDIR $HOME
 USER $USER

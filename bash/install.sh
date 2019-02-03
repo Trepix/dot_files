@@ -3,7 +3,7 @@ FZF=~/.fzf
 VIM_FOLDER=~/.vim
 OH_MY_ZSH_CUSTOM=~/.custom
 TFENV=~/.tfenv
-GIT_REPOSITORY_URI=https://github.com/Trepix/automations.git
+GIT_REPOSITORY_URI=https://github.com/Trepix/dot_files.git
 
 ALIASES_FILE=$OH_MY_ZSH_CUSTOM/aliases
 ENV_VARIABLES_FILE=$OH_MY_ZSH_CUSTOM/env_variables
@@ -31,28 +31,28 @@ check_last_command_and_print() {
 }
 
 
-if [ -z ${AUTOMATIONS_BASH_TMP_FOLDER+x} ]; then
-    AUTOMATIONS_TMP_FOLDER=$(mktemp -d)
+if [ -z ${DOT_FILES_BASH_TMP_FOLDER+x} ]; then
+    DOT_FILES_TMP_FOLDER=$(mktemp -d)
     echo "Installing essential git package"
 
     install=$(sudo apt-get install git --yes 2>&1)
     check_last_command_and_print "  ${install}" "  Successfully git installed"
 
-    clone=$(git clone $GIT_REPOSITORY_URI $AUTOMATIONS_TMP_FOLDER 2>&1)
-    check_last_command_and_print "  ${clone}" "  Successfully automations repository cloned"
+    clone=$(git clone $GIT_REPOSITORY_URI $DOT_FILES_TMP_FOLDER 2>&1)
+    check_last_command_and_print "  ${clone}" "  Successfully DOT_FILES repository cloned"
 
-    AUTOMATIONS_BASH_TMP_FOLDER=$AUTOMATIONS_TMP_FOLDER/bash
+    DOT_FILES_BASH_TMP_FOLDER=$DOT_FILES_TMP_FOLDER/bash
 fi
 
 #import commons function
-. $AUTOMATIONS_BASH_TMP_FOLDER/functions/commons.sh
-. $AUTOMATIONS_BASH_TMP_FOLDER/functions/python.sh
+. $DOT_FILES_BASH_TMP_FOLDER/functions/commons.sh
+. $DOT_FILES_BASH_TMP_FOLDER/functions/python.sh
 
 # ________________________________________________________________________
 # ________________________________________________________________________
 
 echo "Installing packages"
-cat $AUTOMATIONS_BASH_TMP_FOLDER/packages | while read package
+cat $DOT_FILES_BASH_TMP_FOLDER/packages | while read package
 do
     if [ -z "$(hash $package 2>&1)" ]; then
         print_warning_message "  $package is already installed"
@@ -70,7 +70,7 @@ done
 
 configure_vim()    {
     echo "  Downloading vimrc file"    
-    download=$(cp $AUTOMATIONS_BASH_TMP_FOLDER/vimrc $VIM_FOLDER 2>&1)
+    download=$(cp $DOT_FILES_BASH_TMP_FOLDER/vimrc $VIM_FOLDER 2>&1)
     check_last_command_and_print "  ${download}" "  Successfully vim configuration downloaded"
 }
 
@@ -80,7 +80,7 @@ check_and_configure_or_replace_file $VIM_FOLDER/vimrc "vim" "  Another vimrc fil
 
 configure_tmux() {
     echo "  Downloading .tmux.conf file"    
-    download=$(cp $AUTOMATIONS_BASH_TMP_FOLDER/.tmux.conf ~ 2>&1)
+    download=$(cp $DOT_FILES_BASH_TMP_FOLDER/.tmux.conf ~ 2>&1)
     check_last_command_and_print "  ${download}" "  Successfully tmux configuration downloaded"
 }
 
@@ -94,7 +94,7 @@ check_and_configure_or_replace_file ~/.tmux.conf "tmux" "  Another .tmux.conf fi
 echo "" && echo "Setting up oh-my-zsh themes"
 if [ ! -d $OH_MY_ZSH_CUSTOM/themes ]; then
     echo "  Downloading themes"
-    download=$(mkdir $OH_MY_ZSH_CUSTOM/themes && cp $AUTOMATIONS_BASH_TMP_FOLDER/themes/* $OH_MY_ZSH_CUSTOM/themes/ 2>&1)
+    download=$(mkdir $OH_MY_ZSH_CUSTOM/themes && cp $DOT_FILES_BASH_TMP_FOLDER/themes/* $OH_MY_ZSH_CUSTOM/themes/ 2>&1)
     check_last_command_and_print "  $download" "  Successfully themes downloaded"
 else
     print_warning_message "  Themes folder already exists. Nothing has been downloaded"
@@ -115,7 +115,7 @@ fi
 
 configure_aliases() {
     echo "  Downloading aliases"
-    downlaod=$(cp $AUTOMATIONS_BASH_TMP_FOLDER/aliases $ALIASES_FILE 2>&1)
+    downlaod=$(cp $DOT_FILES_BASH_TMP_FOLDER/aliases $ALIASES_FILE 2>&1)
     check_last_command_and_print "  $downlaod" "  Successfully aliases downloaded"
     chmod +x $ALIASES_FILE
 }
@@ -147,7 +147,7 @@ fi
 # .zshrc file
 configure_zshrc() {
     export OH_MY_ZSH_CUSTOM ENV_VARIABLES_FILE ALIASES_FILE OH_MY_ZSH
-    envsubst=$(envsubst < $AUTOMATIONS_BASH_TMP_FOLDER/zshrc.template > $ZSHRC_FILE)
+    envsubst=$(envsubst < $DOT_FILES_BASH_TMP_FOLDER/zshrc.template > $ZSHRC_FILE)
     check_last_command_and_print "  $envsubst" "  Successfully .zshrc file placed on ${HOME} folder"
 }
 
@@ -202,7 +202,7 @@ fi
 
 echo "" && echo "Installing python ecosystem"
 
-download=$(wget -P $AUTOMATIONS_BASH_TMP_FOLDER/ https://bootstrap.pypa.io/get-pip.py 2>&1)
+download=$(wget -P $DOT_FILES_BASH_TMP_FOLDER/ https://bootstrap.pypa.io/get-pip.py 2>&1)
 check_last_command_and_print "  ${download}" "  Successfully downloaded get-pip.py script"
 
 install_python_ecosystem "pip" "python"
