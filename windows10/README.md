@@ -1,10 +1,10 @@
-# Bash
+# Windows10
 
 ## Run test environment
 
 Test environment allows to test features without having to upload it to  public repository. Source folder is copied in a temporal directory like if was cloned with git, which is how production environment works.
 
-Build image (being in /bash directory):
+Build image (being in /windows10 directory):
 ```docker
     docker build -t dot_files --file ./test/Dockerfile .
 ```
