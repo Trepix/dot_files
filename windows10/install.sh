@@ -138,7 +138,7 @@ echo "" && echo "Setting up oh-my-zsh configuration"
 # oh-my-zsh repo clone
 if [ ! -d "$OH_MY_ZSH" ]; then
     echo "  Installing oh-my-zsh" 
-    download=$(git clone git://github.com/ohmyzsh/ohmyzsh.git $OH_MY_ZSH 2>&1)
+    download=$(git clone https://github.com/ohmyzsh/ohmyzsh.git $OH_MY_ZSH 2>&1)
     check_last_command_and_print "  $download" "  Successfully oh-my-zsh repository cloned"
 else
     print_warning_message "  Another installation of oh-my-zsh exists"
