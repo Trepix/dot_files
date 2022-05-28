@@ -204,10 +204,9 @@ echo "" && echo "Installing python ecosystem"
 
 download=$(wget -P $DOT_FILES_WINDOWS10_TMP_FOLDER/ https://bootstrap.pypa.io/get-pip.py 2>&1)
 check_last_command_and_print "  ${download}" "  Successfully downloaded get-pip.py script"
-
-install_python_ecosystem "pip" "python" ${DOT_FILES_WINDOWS10_TMP_FOLDER}
 install_python_ecosystem "pip3" "python3" ${DOT_FILES_WINDOWS10_TMP_FOLDER}
 
+#install_python_ecosystem "pip" "python" ${DOT_FILES_WINDOWS10_TMP_FOLDER}
 # ________________________________________________________________________
 # ________________________________________________________________________
 
