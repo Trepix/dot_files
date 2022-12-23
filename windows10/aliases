@@ -7,3 +7,4 @@
    alias tree5="tree -L 5"
    alias graph="git log --graph --decorate --all"
    alias diff="diff -yBb --suppress-common-lines"
+   alias python="python3"

@@ -4,6 +4,5 @@ tmux
 gettext
 unzip
 curl
-python
 python3
 python3-distutils
